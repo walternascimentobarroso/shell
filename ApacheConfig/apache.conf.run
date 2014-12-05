@@ -14,7 +14,7 @@ read hostName
 echo "Digite o caminho do seu projeto (ex.: /var/www/meuprojeto)"
 read projetoPath
 sudo sed -i "2s/^/127.0.0.1\t${hostName}\n/" /etc/hosts
-
+sudo chmod 777 ${projetoPath}
 host="<VirtualHost *:80>\n
 \tServerAdmin webmaster@localhost\n
 \tServerName ${hostName}\n
@@ -38,7 +38,7 @@ sudo service apache2 restart >> /dev/null 2>&1
 clear
 echo -e "
 \tFinalizado com Sucesso \n		   
-\tDigite ${hostName}/ \n
+\tDigite http://${hostName}/ \n
 \tno seu browser de preferencia \n
 \te navegue a vontade \n
 "
