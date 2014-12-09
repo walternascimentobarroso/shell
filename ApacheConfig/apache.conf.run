@@ -11,34 +11,42 @@ cat <<"EOT"
 EOT
 echo "Digite o nome do seu localhost"
 read hostName
-echo "Digite o caminho do seu projeto (ex.: /var/www/meuprojeto)"
-read projetoPath
-sudo sed -i "2s/^/127.0.0.1\t${hostName}\n/" /etc/hosts
-sudo chmod 777 ${projetoPath}
-host="<VirtualHost *:80>\n
-\tServerAdmin webmaster@localhost\n
-\tServerName ${hostName}\n
-\tDocumentRoot ${projetoPath}\n
-\tDirectoryIndex index.php index.html\n
-\t# ErrorLog ${APACHE_LOG_DIR}/error.log\n
-\t# CustomLog ${APACHE_LOG_DIR}/access.log combined\n
-\t<Directory /var/www/>\n
-\t\tOptions Indexes FollowSymLinks MultiViews\n
-\t\tAllowOverride All\n
-\t\tOrder allow,deny\n
-\t\tallow from all\n
-\t\tRequire all granted\n
-\t</Directory>\n
-</VirtualHost>"
+existe=`grep $'127.0.0.1\t'${hostName}$ /etc/hosts | wc -c`;
+if [ "$existe" -gt 0 ]; then
+	echo -e "
+	\tJá existe uma VHOST com esse nome \n		   
+	\tDigite http://${hostName}/ \n
+	"
+else
+	echo "Digite o caminho do seu projeto (ex.: /var/www/meuprojeto)"
+	read projetoPath
+	sudo sed -i "2s/^/127.0.0.1\t${hostName}\n/" /etc/hosts
+	sudo chmod 777 ${projetoPath}
+	host="<VirtualHost *:80>\n
+	\tServerAdmin webmaster@localhost\n
+	\tServerName ${hostName}\n
+	\tDocumentRoot ${projetoPath}\n
+	\tDirectoryIndex index.php index.html\n
+	\t# ErrorLog ${APACHE_LOG_DIR}/error.log\n
+	\t# CustomLog ${APACHE_LOG_DIR}/access.log combined\n
+	\t<Directory /var/www/>\n
+	\t\tOptions Indexes FollowSymLinks MultiViews\n
+	\t\tAllowOverride All\n
+	\t\tOrder allow,deny\n
+	\t\tallow from all\n
+	\t\tRequire all granted\n
+	\t</Directory>\n
+	</VirtualHost>"
 
-sudo echo -e ${host} > /etc/apache2/sites-available/${hostName}.conf
-cd /etc/apache2/sites-enabled
-sudo a2ensite ${hostName}.conf >> /dev/null 2>&1
-sudo service apache2 restart >> /dev/null 2>&1
-clear
-echo -e "
-\tFinalizado com Sucesso \n		   
-\tDigite http://${hostName}/ \n
-\tno seu browser de preferencia \n
-\te navegue a vontade \n
-"
+	sudo echo -e ${host} > /etc/apache2/sites-available/${hostName}.conf
+	cd /etc/apache2/sites-enabled
+	sudo a2ensite ${hostName}.conf >> /dev/null 2>&1
+	sudo service apache2 restart >> /dev/null 2>&1
+	clear
+	echo -e "
+	\tFinalizado com Sucesso \n		   
+	\tDigite http://${hostName}/ \n
+	\tno seu browser de preferencia \n
+	\te navegue a vontade \n
+	"	
+fi
