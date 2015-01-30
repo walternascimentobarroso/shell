@@ -40,6 +40,7 @@ else
 
 	sudo echo -e ${host} > /etc/apache2/sites-available/${hostName}.conf
 	cd /etc/apache2/sites-enabled
+	sudo a2enmod rewrite >> /dev/null 2>&1
 	sudo a2ensite ${hostName}.conf >> /dev/null 2>&1
 	sudo service apache2 restart >> /dev/null 2>&1
 	clear
